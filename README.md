@@ -108,5 +108,5 @@ Struktur folder telah dirapikan menggunakan folder `includes/` untuk file parsia
 - **Error `failed to open stream` pada Sidebar**: Pastikan file `sidebar_admin.php` berada di folder `includes/` (sejajar dengan `header.php`), bukan di dalam `admin/includes/`.
 - **Gambar tidak muncul saat Print**: Pastikan opsi "Background graphics" dicentang pada dialog print browser jika gambar/warna background hilang.
 
-# Lisensi
+## Lisensi
 Aplikasi ini dibuat untuk tujuan edukasi, portofolio, dan pengembangan lebih lanjut.
