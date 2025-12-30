@@ -2,26 +2,25 @@
 session_start();
 include '../config/database.php';
 
-// Cek Login
+//1. Cek Login
 if (!isset($_SESSION['status']) || $_SESSION['status'] != "login") {
     header("Location: login.php");
     exit;
 }
 
-// Proses Simpan
+//2. Proses Simpan
 if (isset($_POST['simpan'])) {
     $name     = trim($_POST['name']);
     $category = trim($_POST['category']);
     $origin   = trim($_POST['origin']);
     $price    = (int)$_POST['price'];
+    $phone    = trim($_POST['seller_phone']);
     $desc     = trim($_POST['description']);
     $specs    = trim($_POST['specifications']);
 
-    // Validasi
-    if (empty($name) || empty($category) || empty($origin) || $price <= 0 || empty($desc)) {
+    if (empty($name) || empty($category) || empty($origin) || $price <= 0 || empty($desc) || empty($phone)) {
         echo "<script>alert('Harap lengkapi semua data wajib!');</script>";
     } else {
-        // Upload Gambar
         $img_db = 'default.jpg';
         if (!empty($_FILES['image']['name'])) {
             $allowed = ['png', 'jpg', 'jpeg'];
@@ -38,9 +37,8 @@ if (isset($_POST['simpan'])) {
             }
         }
 
-        // Insert Database
-        $stmt = mysqli_prepare($conn, "INSERT INTO products (name, category, price, origin, description, specifications, image) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        mysqli_stmt_bind_param($stmt, "ssissss", $name, $category, $price, $origin, $desc, $specs, $img_db);
+        $stmt = mysqli_prepare($conn, "INSERT INTO products (name, category, price, origin, seller_phone, description, specifications, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        mysqli_stmt_bind_param($stmt, "ssisssss", $name, $category, $price, $origin, $phone, $desc, $specs, $img_db);
 
         if (mysqli_stmt_execute($stmt)) {
             header("Location: dashboard.php?msg=sukses_tambah");
@@ -65,7 +63,6 @@ if (isset($_POST['simpan'])) {
 <body>
 
 <div class="admin-wrapper">
-    
     <?php 
     $active_menu = 'product_add'; 
     include '../includes/sidebar_admin.php'; 
@@ -76,7 +73,7 @@ if (isset($_POST['simpan'])) {
             
             <h2 style="margin-bottom: 20px; font-weight: 700;">Tambah Produk Baru</h2>
 
-            <div class="card">
+            <div class="card" style="background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); border: 1px solid #f0f0f0;">
                 <form action="" method="POST" enctype="multipart/form-data">
                     
                     <div style="margin-bottom: 15px;">
@@ -102,9 +99,15 @@ if (isset($_POST['simpan'])) {
                         </div>
                     </div>
 
-                    <div style="margin-bottom: 15px;">
-                        <label>Harga (Rp)</label>
-                        <input type="number" name="price" required placeholder="Contoh: 150000">
+                    <div style="display: flex; gap: 20px; margin-bottom: 15px;">
+                        <div style="flex:1">
+                            <label>Harga (Rp)</label>
+                            <input type="number" name="price" required placeholder="Contoh: 150000">
+                        </div>
+                        <div style="flex:1">
+                            <label>No. HP Penjual</label>
+                            <input type="number" name="seller_phone" required placeholder="Contoh: 62812345678">
+                        </div>
                     </div>
 
                     <div style="margin-bottom: 15px;">
@@ -119,15 +122,15 @@ if (isset($_POST['simpan'])) {
 
                     <div style="margin-bottom: 25px;">
                         <label>Foto Produk</label>
-                        <input type="file" name="image" required accept=".jpg, .jpeg, .png" style="background: #f9f9f9; border: 1px dashed #ccc;">
+                        <input type="file" name="image" required accept=".jpg, .jpeg, .png" style="background: #f9f9f9; border: 1px dashed #ccc; padding: 10px; width: 100%; border-radius: 6px;">
                         <small style="color: #888; display: block; margin-top: 5px;">Format: JPG/PNG, Maks 2MB.</small>
                     </div>
                     
                     <div style="display: flex; gap: 10px;">
-                        <button type="submit" name="simpan" class="btn btn-primary">
+                        <button type="submit" name="simpan" class="btn btn-primary" style="padding: 10px 25px;">
                             <i class="fas fa-save"></i> Simpan Produk
                         </button>
-                        <a href="dashboard.php" class="btn btn-secondary">Batal</a>
+                        <a href="dashboard.php" class="btn btn-secondary" style="padding: 10px 25px;">Batal</a>
                     </div>
 
                 </form>

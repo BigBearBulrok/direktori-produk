@@ -2,17 +2,17 @@
 session_start();
 include '../config/database.php';
 
-// Cek Login
+//1. Cek Login
 if (!isset($_SESSION['status']) || $_SESSION['status'] != "login") {
     header("Location: login.php");
     exit;
 }
 
-// Ambil Data Hero
+//2. Ambil Data Hero
 $query = mysqli_query($conn, "SELECT * FROM hero_settings LIMIT 1");
 $hero = mysqli_fetch_assoc($query);
 
-// Proses Update
+//3. Proses Update
 if (isset($_POST['update_hero'])) {
     $title    = mysqli_real_escape_string($conn, $_POST['title']);
     $subtitle = mysqli_real_escape_string($conn, $_POST['subtitle']);
@@ -23,7 +23,6 @@ if (isset($_POST['update_hero'])) {
 
     if ($update) {
         $msg_sukses = "Tampilan Hero berhasil diperbarui!";
-        // Refresh data
         $hero['title'] = $title;
         $hero['subtitle'] = $subtitle;
         $hero['background_color'] = $bg_color;

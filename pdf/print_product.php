@@ -91,10 +91,5 @@ if (!$data) {
         </div>
 
     </div>
-
-    <script>
-        // Opsional: Jika ingin langsung muncul dialog print saat halaman dibuka, hilangkan komentar di bawah:
-        // window.onload = function() { window.print(); }
-    </script>
 </body>
 </html>

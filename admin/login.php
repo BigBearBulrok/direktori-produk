@@ -13,7 +13,6 @@ if (isset($_POST['login'])) {
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
 
-    // Menggunakan Prepared Statement untuk keamanan
     $stmt = mysqli_prepare($conn, "SELECT * FROM admin WHERE username = ?");
     mysqli_stmt_bind_param($stmt, "s", $username);
     mysqli_stmt_execute($stmt);
@@ -21,7 +20,6 @@ if (isset($_POST['login'])) {
 
     if (mysqli_num_rows($result) === 1) {
         $row = mysqli_fetch_assoc($result);
-        // Verifikasi password hash
         if (password_verify($password, $row['password'])) {
             $_SESSION['username'] = $row['username'];
             $_SESSION['status'] = "login";

@@ -2,24 +2,24 @@
 session_start();
 include 'config/database.php';
 
-// Validasi ID
+//1. Validate ID
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     header("Location: index.php");
     exit;
 }
 
+//2. Fetch Product Data
 $id = (int)$_GET['id'];
 $query = mysqli_query($conn, "SELECT * FROM products WHERE id = '$id'");
 $product = mysqli_fetch_assoc($query);
 
-// Jika produk tidak ada
 if (!$product) {
     header("Location: index.php");
     exit;
 }
 
 $page_title = $product['name'] . " - Detail";
-$is_detail_page = true; // Trigger untuk mengubah Navbar jadi tombol Back
+$is_detail_page = true; 
 include 'includes/header.php';
 ?>
 
@@ -85,7 +85,6 @@ include 'includes/header.php';
         <h3 style="margin-bottom: 25px; font-weight: 700; color: #333;">Produk Lainnya</h3>
         <div class="product-grid">
             <?php
-            // Ambil 4 produk acak selain yang sedang dilihat
             $query_other = mysqli_query($conn, "SELECT * FROM products WHERE id != '$id' ORDER BY RAND() LIMIT 4");
             while($other = mysqli_fetch_assoc($query_other)):
             ?>
@@ -132,7 +131,6 @@ include 'includes/header.php';
 
     <script>
         function showContact(phoneNumber) {
-            // Format nomor (tambah + di depan)
             var formattedNumber = "+" + phoneNumber;
             document.getElementById('phoneNumberArea').innerText = formattedNumber;
             document.getElementById('contactModal').style.display = 'flex';
@@ -142,7 +140,6 @@ include 'includes/header.php';
             document.getElementById('contactModal').style.display = 'none';
         }
 
-        // Tutup jika klik di luar kotak
         window.onclick = function(event) {
             var modal = document.getElementById('contactModal');
             if (event.target == modal) {

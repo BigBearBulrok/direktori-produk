@@ -33,7 +33,7 @@ $query = mysqli_query($conn, $query_str);
 <div class="admin-wrapper">
     
     <?php 
-    $active_menu = 'dashboard'; // Penanda menu aktif
+    $active_menu = 'dashboard'; 
     include '../includes/sidebar_admin.php'; 
     ?>
 

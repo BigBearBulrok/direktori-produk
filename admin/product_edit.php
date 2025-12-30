@@ -2,39 +2,34 @@
 session_start();
 include '../config/database.php';
 
-// Cek Login
+//1. Cek Login
 if (!isset($_SESSION['status']) || $_SESSION['status'] != "login") {
     header("Location: login.php");
     exit;
 }
 
-// Ambil ID dari URL
+//2. Ambil ID
 $id = (int)$_GET['id'];
 $query = mysqli_query($conn, "SELECT * FROM products WHERE id = '$id'");
 $data  = mysqli_fetch_assoc($query);
 
-// Jika data tidak ada, kembalikan ke dashboard
-if (!$data) {
-    header("Location: dashboard.php");
-    exit;
-}
+if (!$data) { header("Location: dashboard.php"); exit; }
 
-// Proses Update Data
+//3. Proses Update
 if (isset($_POST['update'])) {
     $name     = trim($_POST['name']);
     $category = trim($_POST['category']);
     $origin   = trim($_POST['origin']);
     $price    = (int)$_POST['price'];
+    $phone    = trim($_POST['seller_phone']);
     $desc     = trim($_POST['description']);
     $specs    = trim($_POST['specifications']);
     $old_img  = $_POST['old_image'];
 
-    if (empty($name) || empty($category) || empty($origin) || $price <= 0 || empty($desc)) {
+    if (empty($name) || empty($category) || empty($origin) || $price <= 0 || empty($desc) || empty($phone)) {
         echo "<script>alert('Mohon lengkapi semua data wajib!');</script>";
     } else {
-        // Logika Ganti Gambar
-        $img_db = $old_img; // Default pakai gambar lama
-        
+        $img_db = $old_img; 
         if (!empty($_FILES['image']['name'])) {
             $allowed = ['png', 'jpg', 'jpeg'];
             $filename = $_FILES['image']['name'];
@@ -42,12 +37,8 @@ if (isset($_POST['update'])) {
             
             if (in_array($ext, $allowed)) {
                 $new_name = rand() . '_' . $filename;
-                
-                // Upload gambar baru
                 if (move_uploaded_file($_FILES['image']['tmp_name'], '../assets/images/' . $new_name)) {
                     $img_db = $new_name;
-                    
-                    // Hapus gambar lama jika bukan default
                     if ($old_img != 'default.jpg' && file_exists('../assets/images/' . $old_img)) {
                         unlink('../assets/images/' . $old_img);
                     }
@@ -57,9 +48,8 @@ if (isset($_POST['update'])) {
             }
         }
 
-        // Update Database
-        $stmt = mysqli_prepare($conn, "UPDATE products SET name=?, category=?, price=?, origin=?, description=?, specifications=?, image=? WHERE id=?");
-        mysqli_stmt_bind_param($stmt, "ssissssi", $name, $category, $price, $origin, $desc, $specs, $img_db, $id);
+        $stmt = mysqli_prepare($conn, "UPDATE products SET name=?, category=?, price=?, origin=?, seller_phone=?, description=?, specifications=?, image=? WHERE id=?");
+        mysqli_stmt_bind_param($stmt, "ssisssssi", $name, $category, $price, $origin, $phone, $desc, $specs, $img_db, $id);
         
         if (mysqli_stmt_execute($stmt)) {
             header("Location: dashboard.php?msg=sukses_edit");
@@ -84,7 +74,6 @@ if (isset($_POST['update'])) {
 <body>
 
 <div class="admin-wrapper">
-    
     <?php 
     $active_menu = 'dashboard'; 
     include '../includes/sidebar_admin.php'; 
@@ -96,7 +85,6 @@ if (isset($_POST['update'])) {
             <h2 style="margin-bottom: 20px; font-weight: 700;">Edit Produk</h2>
 
             <div class="card" style="background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); border: 1px solid #f0f0f0;">
-                
                 <form action="" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="old_image" value="<?php echo $data['image']; ?>">
                     
@@ -122,9 +110,15 @@ if (isset($_POST['update'])) {
                         </div>
                     </div>
 
-                    <div style="margin-bottom: 15px;">
-                        <label>Harga (Rp)</label>
-                        <input type="number" name="price" value="<?php echo $data['price']; ?>" required>
+                    <div style="display: flex; gap: 20px; margin-bottom: 15px;">
+                        <div style="flex:1">
+                            <label>Harga (Rp)</label>
+                            <input type="number" name="price" value="<?php echo $data['price']; ?>" required>
+                        </div>
+                        <div style="flex:1">
+                            <label>No. HP Penjual</label>
+                            <input type="number" name="seller_phone" value="<?php echo htmlspecialchars($data['seller_phone']); ?>" required>
+                        </div>
                     </div>
 
                     <div style="margin-bottom: 15px;">
