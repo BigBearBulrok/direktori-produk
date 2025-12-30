@@ -1,6 +1,6 @@
 # Direktori Produk - Made in Indonesia
 
-Aplikasi web sederhana untuk direktori produk lokal Indonesia dengan panel admin yang sudah dimodernisasi.
+Aplikasi web direktori produk lokal berbasis PHP Native dan MySQL. Fitur mencakup Panel Admin responsif, manajemen produk (CRUD), pengaturan tampilan Hero Section dinamis, dan fitur cetak laporan PDF.
 
 ## Fitur Utama
 
